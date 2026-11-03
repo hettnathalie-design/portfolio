@@ -1,0 +1,646 @@
+/* ==========================================================
+   SCHRIFTEN
+   ========================================================== */
+@font-face {
+  font-family: 'Montserrat-Regular';
+  src: url(./Font/Montserrat-Regular.ttf) format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap; /* Verhindert unsichtbaren Text beim Laden */
+}
+
+@font-face {
+  font-family: 'Montserrat-ExtraLight';
+  src: url(./Font/Montserrat-ExtraLight.ttf) format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant';
+  src: url(./Font/CormorantGaramond-Medium.ttf) format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================
+   GRUNDLAGEN
+   ========================================================== */
+html {
+  scroll-behavior: smooth;
+  background-color: rgb(0, 0, 0);
+  /* Skalierung: bis ca. 1280px Breite normal (16px), danach wächst die
+     Grundschriftgröße mit dem Fenster (max. 150 %). Alles in rem skaliert mit. */
+  font-size: clamp(100%, calc(56% + 0.55vw), 150%);
+}
+
+body {
+  margin: 0; /* kein weißer/schwarzer Rand um das Titelbild */
+}
+
+/* ==========================================================
+   SCROLL-PFEILE
+   ========================================================== */
+.scroll-up {
+  margin: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 0;
+  background: #00000046;
+  color: #bbb;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  z-index: 3000;
+
+  & img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.scroll-down {
+  margin: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 0;
+  background: #00000046;
+  color: #bbb;
+  transform: rotate(90deg);
+  z-index: 3000;
+  cursor: pointer;
+
+  & img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.scroll-arrows {
+  position: fixed;
+  top: min(80%, calc(100% - 8rem)); /* bleibt auch auf niedrigen Bildschirmen sichtbar */
+  right: clamp(0.75rem, 3vw, 1.875rem);
+  transform: translate(-50%);
+  /* Zwei feste Plätze: oben "hoch", unten "runter". Ein ausgeblendeter
+     Pfeil behält seinen Platz, der andere springt dadurch nie. */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 3001;
+}
+
+.scroll-up:hover,
+.scroll-down:hover {
+  background: rgba(0, 0, 0, 0.726);
+}
+
+/* ==========================================================
+   NAVIGATION (Desktop)
+   ========================================================== */
+.main-list {
+  margin: 0;
+  padding: 0 30px;
+  list-style: none;
+  font-family: Montserrat-Regular, sans-serif;
+  font-size: clamp(1rem, 0.5rem + 0.5vw, 1.5rem);
+}
+
+.sub-list {
+  list-style-type: disc;
+  color: hsl(0, 0%, 100%);
+  margin-bottom: 5px;
+
+  & li {
+    color: hsl(0, 0%, 100%);
+    font-family: Montserrat-ExtraLight, sans-serif;
+    font-size: clamp(0.9rem, 0.5rem + 0.5vw, 1.25rem);
+  }
+}
+
+.mainHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2050;
+  background-color: hsl(0, 0%, 0%);
+  width: 17.5rem; /* = 280px bei Normalgröße, skaliert mit */
+  height: 100%;
+  padding-right: 30px;
+}
+
+.nav-list {
+  & li {
+    background-color: hsl(0, 0%, 0%);
+    padding: 7px;
+    height: 100%;
+
+    & a {
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+
+      &:link {
+        color: hsl(0, 0%, 100%);
+      }
+
+      &:visited {
+        color: hsl(0, 0%, 100%);
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.logo {
+  width: 5.625rem;
+  margin-inline: auto;
+  display: block;
+}
+
+.trennlinie {
+  border: 0;
+  border-top: 1px solid #888;
+  margin: 32px;
+  width: 12.5rem;
+}
+
+/* Auf dem Desktop nicht anzeigen */
+.mobile-logo {
+  display: none;
+}
+
+/* Burger-Button: nur mobil sichtbar */
+.burger-button {
+  display: none;
+}
+
+/* ==========================================================
+   SECTIONS – linker Abstand wegen der festen Navigation
+   ========================================================== */
+#aboutme,
+#aboutme2 {
+  padding-left: max(18rem, 22vw);
+}
+
+/* Galerie-Sections (.gallery) bekommen den Abstand weiter unten direkt über
+   die Klasse – so gilt er automatisch für JEDE neue Section, ohne dass man
+   ihre ID hier eintragen muss. */
+
+/* ----- Startseite ----- */
+section#aboutme {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0)),
+    url(./BilderPortfolio/Soundwave-01.webp);
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: 17.5rem 0; /* Breite der Navigation */
+
+  /* FIX: verhindert, dass der Rand der Überschrift (margin-top) die
+     ganze Section samt Titelbild nach unten schiebt */
+  display: flow-root;
+
+  p {
+    font-family: Montserrat-ExtraLight, sans-serif;
+    color: #fff;
+    margin-left: 1rem;
+    margin-top: -2rem;
+  }
+}
+
+.aboutme-title {
+  margin-left: 1rem;
+  margin-top: clamp(4rem, 24vw, 14.5rem);
+  color: #fff;
+  font-family: Cormorant, serif;
+  font-size: clamp(1rem, 1rem + 3.5vw, 3.75rem);
+  font-weight: lighter;
+}
+
+/* ----- About me ----- */
+.aboutme3 {
+  display: flex;
+  align-items: center;   /* wie bei den Galerie-Sections: Inhalt mittig im Viewport */
+  min-height: 100vh;
+  padding-block: 20px;
+}
+
+/* About me: großer Text behält den Goldenen Schnitt (Text hat kein Bildformat) */
+.aboutme3 .grid-container {
+  --cols: 1.618fr 1fr;
+}
+
+.aboutme-text {
+  font-family: Montserrat-ExtraLight, sans-serif;
+  color: #fff;
+}
+
+/* ==========================================================
+   GALERIE
+   ========================================================== */
+.gallery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #000000;
+  /* oben | rechts | unten | links (links = Platz für die feste Navigation) */
+  padding: 20px 20px 20px max(18rem, 22vw);
+}
+
+/*
+  Goldener Schnitt Aufteilung (ca. 61.8% zu 38.2%)
+  Spalte 1: 1.618fr | Spalte 2: 1fr
+  Zeile 1: 1fr | Zeile 2: 1.618fr (umgedreht für optische Balance)
+*/
+.grid-container {
+  /* Das große Element füllt in JEDER Section die volle Höhe des Viewports
+     (abzüglich Rand). Seine Breite folgt dem Seitenverhältnis des Bildes
+     (--large-ratio = Breite / Höhe, wird vom JavaScript gesetzt; 1.2 ist der
+     Startwert). 4rem = Innenabstände oben/unten bzw. links/rechts.
+     Die Breite wird auf 35 % – 70 % begrenzt, der Rest gehört den 2 kleinen Elementen. */
+  --grid-h: calc(100vh - 8rem);
+  --large-ratio: 1.2;
+  --cols: minmax(0, clamp(35%, calc((var(--grid-h) - 4rem) * var(--large-ratio) + 4rem), 70%)) minmax(0, 1fr);
+
+  display: grid;
+  grid-template-columns: var(--cols);
+  grid-template-rows: 1fr 1.618fr;
+  gap: 15px;
+  width: calc(100% - 2rem); /* 2rem = Innenabstand links/rechts, kein Überstand */
+  height: var(--grid-h);
+}
+
+.grid-item {
+  position: relative;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: visible;
+  min-height: 0;
+
+  h3 {
+    padding-left: 0;
+  }
+
+  p {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Verhindert Verzerrung der Bilder */
+  display: block;
+}
+
+/* Wrapper (div.reveal bzw. Link) um ein Bild füllt die ganze Zelle.
+   Nur so kann "height: 100%" beim Bild greifen und object-fit: contain
+   das Bild in die Zelle einpassen. Vorher hatte der Wrapper keine Höhe,
+   das Bild wurde je nach Breite zu hoch und ragte in die Nachbar-Sections. */
+.grid-item:not(.grid-text) > .reveal,
+.grid-item > a,
+.grid-item > .reveal > a {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Bild 1 nimmt die komplette linke Spalte ein */
+.img-large {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+/* Bild 2 oben rechts */
+.img-small-top {
+  grid-column: 2;
+  grid-row: 1;
+
+  p {
+    margin-left: 1rem;
+  }
+}
+
+/* Bild 3 unten rechts */
+.img-small-bottom {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Inhalt einer Galerie-Section füllt die verfügbare Breite */
+.grid-title {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* ----- Zusätzliche Bildreihen (1 bis 4 Bilder nebeneinander) ----- */
+.grid-title > * + * {
+  margin-top: 15px; /* Abstand zwischen den Reihen */
+}
+
+.image-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: calc(100% - 2rem);
+}
+
+.image-row .grid-item {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Breiteres Bild in einer Reihe (Goldener Schnitt) */
+.image-row .img-wide {
+  flex: 1.618 1 0;
+}
+
+.image-row .grid-item img {
+  height: auto; /* Seitenverhältnis bleibt erhalten */
+}
+
+/* ==========================================================
+   REVEAL-ANIMATION
+   ========================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition:
+    opacity 1.5s ease 0.1s,
+    transform 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.reveal:nth-child(2) { transition-delay: 0.1s; }
+.reveal:nth-child(3) { transition-delay: 0.2s; }
+.reveal:nth-child(4) { transition-delay: 0.3s; }
+
+/* ==========================================================
+   ALLGEMEINER TEXT IN DIVS
+   ========================================================== */
+div {
+  font-family: Montserrat-ExtraLight, sans-serif;
+  color: #fff;
+  padding: 1rem;
+}
+
+/* ==========================================================
+   TABLET UND SMARTPHONE (bis 1024px)
+   Muss am Ende stehen, damit es die Desktop-Regeln überschreibt.
+   ========================================================== */
+@media (max-width: 1024px) {
+
+  /* ----- Burger-Button ----- */
+  .burger-button {
+    display: grid;
+    place-items: center;
+
+    position: fixed;
+    top: 32px;
+    left: 16px;
+    z-index: 1001;
+
+    width: 48px;
+    height: 48px;
+    padding: 0;
+
+    border: none;
+    background: #00000046;
+    color: #ffffff;
+
+    font-size: 28px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .burger-button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 4px;
+  }
+
+  .burger-button:hover {
+    background: rgba(0, 0, 0, 0.726);
+  }
+
+  /* ----- Header wird zum unsichtbaren Container ----- */
+  .mainHeader {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  /* ----- Navigation zunächst komplett ausblenden ----- */
+  .navigation {
+    display: none;
+
+    position: fixed;
+    top: 100px;
+    left: auto;
+    bottom: auto;
+    z-index: 1000;
+
+    box-sizing: border-box;
+    width: min(70vw, 320px);
+    height: auto;
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+
+    padding: 20px;
+    background: #000;
+    border: none;
+  }
+
+  /* Beim Öffnen wieder anzeigen */
+  .navigation.is-open {
+    display: block;
+  }
+
+  /* Im mobilen Menü kein Logo und keine Trennlinie */
+  .navigation .logo,
+  .navigation .trennlinie {
+    display: none;
+  }
+
+  /* Die eigentliche Linkliste anzeigen */
+  .navigation .nav-list {
+    display: block;
+  }
+
+  /* ----- Mobiles Logo ----- */
+  .mobile-logo {
+    display: block;
+    position: fixed;
+    top: 16px;
+    left: 20px;
+
+    width: 60px;
+    background: transparent;
+    z-index: 999;
+  }
+
+  .mobile-logo img {
+    display: block;
+    width: 150%;
+    height: auto;
+    margin-left: 60px;
+  }
+
+  /* ----- Startseite ----- */
+  section#aboutme {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-position: left center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    h1 {
+      margin: 0;
+      padding: 10rem 5.5rem;
+    }
+
+    .aboutme-title {
+      margin-top: 5rem;
+    }
+
+    p {
+      margin-top: -11rem;
+      font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1rem);
+      padding: 1rem;
+      margin-left: 4.4rem;
+    }
+  }
+
+  /* ----- Alle weiteren Sections: gleicher Seitenabstand (16px) ----- */
+  #aboutme2,
+  #mediadesign,
+  #visualart,
+  .gallery {
+    width: 100%;
+    margin: 0;
+    padding: 80px 16px 20px;
+    background-position: left center;
+  }
+
+  /* Innere Container ohne zusätzlichen Abstand, sonst werden die Bilder schmaler */
+  #contact,
+  #BD,
+  #CD,
+  #DC,
+  #characterdesign,
+  .grid-title {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .grid-title > * + * {
+    margin-top: 10px; /* Abstand zwischen den Reihen */
+  }
+
+  /* ----- Galerie auf dem Handy -----
+     Jedes Bild ist so breit wie der Inhaltsbereich (gleicher Rand links/rechts)
+     und wird nie beschnitten. Hohe Bilder (Hochformat) stehen paarweise
+     nebeneinander – das erkennt das JavaScript und setzt die Klasse "is-pair". */
+  .grid-container,
+  .image-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    width: 100%;
+    height: auto;
+    gap: 10px;
+    padding: 0;
+  }
+
+  /* Alle Grid-Elemente zurücksetzen: standardmäßig volle Breite */
+  .grid-container > .grid-item,
+  .image-row > .grid-item {
+    grid-area: auto;
+    grid-column: 1 / -1;
+    position: static;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 0; /* keine runden Ecken auf dem Handy */
+  }
+
+  /* Zwei hohe Bilder nebeneinander */
+  .grid-container > .grid-item.is-pair,
+  .image-row > .grid-item.is-pair {
+    grid-column: auto;
+  }
+
+  /* Text immer zuerst und vollständig sichtbar */
+  .grid-container > .grid-text {
+    order: -1;
+    padding: 1.25rem;
+    overflow: visible;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+    display: block;
+    align-items: initial;
+    justify-content: initial;
+  }
+
+  /* Wrapper um Bilder: kein Innenabstand, volle Breite */
+  .grid-item:not(.grid-text) > .reveal,
+  .grid-item > a,
+  .grid-item > .reveal > a {
+    padding: 0;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Bilder: volle Breite, Höhe automatisch, nichts abschneiden */
+  .grid-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Reihenfolge der Elemente */
+  .img-small-top {
+    order: -2;
+  }
+
+  .img-large {
+    order: 1;
+  }
+
+  .img-small-bottom {
+    order: 2;
+  }
+}
