@@ -94,11 +94,8 @@
           <br>Dieses Portfolio vereint meine gestalterischen Arbeiten, persönlichen Projekte und Interessen – und gibt einen Einblick in die Dinge, die mich inspirieren und antreiben.</p>
         </div>
       </div>
-      <div class="grid-item img-small-top">
-        <img src="./BilderPortfolio/Platzhalter2.webp" alt="Bild oben rechts" class="reveal" loading="lazy">
-      </div>
       <div class="grid-item img-small-bottom">
-        <img src="./BilderPortfolio/selfie1.webp" alt="Bild-Aboutme" class="reveal" loading="lazy">
+        <img src="./BilderPortfolio/selfie1.webp" alt="Selfie von Nathalie Hett" class="reveal" loading="lazy">
       </div>
     </div>
   </section>
@@ -109,14 +106,14 @@
       <div class="grid-container">
         <div class="grid-item img-large">
           <div class="reveal">
-            <img src="./BilderPortfolio/Platzhalter1.webp" alt="Hauptbild" class="reveal">
+            <img src="./BilderPortfolio/Planetarium.webp" alt="Hauptbild" class="reveal">
           </div>
         </div>
-        <div class="grid-item img-small-top reveal">
+        <!-- Überschrift + Text in EINEM Feld, dadurch steht der Text direkt unter der Überschrift -->
+        <div class="grid-item img-small-top grid-intro reveal">
           <h3>MEDIA DESIGN</h3>
-        </div>
-        <div class="grid-item img-small-bottom">
-          <img src="./BilderPortfolio/Platzhalter2.webp" alt="Bild unten rechts" class="reveal" loading="lazy">
+          <p>In meiner Umschulung verbinde ich gestalterische Grundlagen mit der praktischen Anwendung von Adobe Illustrator, InDesign und Photoshop. Die folgenden Arbeiten zeigen meine Kenntnisse in Logoentwicklung, Typografie, Farbgestaltung und Layout: von einem in Illustrator gestalteten Logo über ein Brand Design mit Kaffeebecher bis hin zu einem Corporate Design für eine Yacht.
+          Einen Einblick in die konzeptionelle Arbeit bietet das Kundenprojekt „Huni Kuin“. Hier habe ich meine Kenntnisse aus den verschiedenen Gestaltungsbereichen zusammengeführt und eine Designkonzeption mit medienübergreifenden Anwendungen entwickelt.</p>
         </div>
       </div>
 
@@ -174,20 +171,29 @@
     </div>
   </section>
 
-  <!-- -----------DESIGN CONCEPTION --------------->
+  <!-- -----------DESIGN CONCEPTION (nur Überschrift + PDF zum Blättern)--------------->
   <section class="gallery">
     <div class="grid-title" id="DC">
-      <div class="grid-container">
-        <div class="grid-item img-large">
-          <div class="reveal">
-            <img src="./BilderPortfolio/Platzhalter1.webp" alt="Hauptbild" class="reveal">
-          </div>
-        </div>
-        <div class="grid-item img-small-top reveal">
+      <div class="grid-container grid-single">
+        <div class="grid-item grid-heading reveal">
           <h3>Design Conception</h3>
         </div>
-        <div class="grid-item img-small-bottom">
-          <img src="./BilderPortfolio/Platzhalter2.webp" alt="Bild unten rechts" class="reveal" loading="lazy">
+
+        <!--
+          PDF-Viewer: Pfad zur PDF-Datei in data-pdf eintragen.
+          Funktioniert mit PDF.js (Skript unten). Wenn das nicht lädt
+          (z. B. Datei per Doppelklick geöffnet), zeigt der Browser das PDF selbst an.
+        -->
+        <div class="grid-item pdf-item pdf-viewer reveal" data-pdf="./PDF/Design-Conception.pdf">
+          <div class="pdf-stage" tabindex="0" aria-label="PDF Design Conception. Mit den Pfeiltasten blättern.">
+            <canvas></canvas>
+          </div>
+          <div class="pdf-controls">
+            <button class="pdf-btn pdf-prev" type="button" aria-label="Vorherige Seite">&#8249;</button>
+            <span class="pdf-status" aria-live="polite">Seite 1 / 1</span>
+            <button class="pdf-btn pdf-next" type="button" aria-label="Nächste Seite">&#8250;</button>
+            <a class="pdf-open" href="./PDF/Design-Conception.pdf" target="_blank" rel="noopener noreferrer">PDF öffnen</a>
+          </div>
         </div>
       </div>
     </div>
@@ -202,11 +208,10 @@
             <img src="./BilderPortfolio/layla-fullcolo.webp" alt="Hauptbild" class="reveal">
           </div>
         </div>
-        <div class="grid-item img-small-top reveal">
+        <!-- Überschrift + Text in EINEM Feld -->
+        <div class="grid-item img-small-top grid-intro reveal">
           <h3>VISUAL ART</h3>
-        </div>
-        <div class="grid-item img-small-bottom">
-          <img src="./BilderPortfolio/mch-merged-v2.webp" alt="Bild unten rechts" class="reveal" loading="lazy">
+          <p>Platzhaltertext: Hier steht deine Beschreibung zu Visual Art.</p>
         </div>
       </div>
     </div>
@@ -311,6 +316,9 @@
     </div>
   </section>
 
+
+  <!-- PDF.js (zeigt das PDF seitenweise an) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <!-- ----JAVASCRIPT----- -->
   <script>
@@ -470,6 +478,129 @@
     mobileView.addEventListener("change", updateLayout);
     window.addEventListener("load", updateLayout);
     updateLayout();
+
+
+    // ------ PDF zum Blättern (Design Conception) ------
+    function initPdfViewer(viewer) {
+      const url = viewer.dataset.pdf;
+      const stage = viewer.querySelector(".pdf-stage");
+      const canvas = viewer.querySelector("canvas");
+      const prevButton = viewer.querySelector(".pdf-prev");
+      const nextButton = viewer.querySelector(".pdf-next");
+      const status = viewer.querySelector(".pdf-status");
+      const context = canvas.getContext("2d");
+
+      let pdf = null;
+      let pageNumber = 1;
+      let isRendering = false;
+      let renderAgain = false;
+
+      // Notlösung: Der Browser zeigt das PDF selbst an (ohne eigene Pfeile)
+      function showFallback() {
+        viewer.classList.add("is-fallback");
+        stage.innerHTML = "";
+
+        const embed = document.createElement("object");
+        embed.className = "pdf-object";
+        embed.type = "application/pdf";
+        embed.data = url;
+        embed.textContent = "Das PDF kann hier nicht angezeigt werden. Bitte über „PDF öffnen“ ansehen.";
+        stage.append(embed);
+      }
+
+      async function render() {
+        if (isRendering) {
+          renderAgain = true;
+          return;
+        }
+        isRendering = true;
+
+        try {
+          const page = await pdf.getPage(pageNumber);
+          const size = page.getViewport({ scale: 1 });
+
+          // Seite so groß wie möglich einpassen (am Handy nur nach Breite)
+          const maxWidth = stage.clientWidth;
+          const maxHeight = mobileView.matches ? Infinity : stage.clientHeight;
+          const fit = Math.min(maxWidth / size.width, maxHeight / size.height);
+
+          const ratio = window.devicePixelRatio || 1; // scharf auf Retina-Displays
+          const viewport = page.getViewport({ scale: fit * ratio });
+
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+          canvas.style.width = Math.floor(size.width * fit) + "px";
+          canvas.style.height = Math.floor(size.height * fit) + "px";
+
+          await page.render({ canvasContext: context, viewport }).promise;
+        } finally {
+          canvas.classList.remove("is-changing");
+          isRendering = false;
+        }
+
+        status.textContent = "Seite " + pageNumber + " / " + pdf.numPages;
+        prevButton.disabled = pageNumber <= 1;
+        nextButton.disabled = pageNumber >= pdf.numPages;
+
+        if (renderAgain) {
+          renderAgain = false;
+          render();
+        }
+      }
+
+      function goTo(offset) {
+        const target = pageNumber + offset;
+        if (!pdf || target < 1 || target > pdf.numPages) return;
+
+        pageNumber = target;
+        canvas.classList.add("is-changing"); // kurzes Ausblenden beim Blättern
+        render();
+      }
+
+      prevButton.addEventListener("click", () => goTo(-1));
+      nextButton.addEventListener("click", () => goTo(1));
+
+      stage.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") goTo(-1);
+        if (event.key === "ArrowRight") goTo(1);
+      });
+
+      // Wischen am Handy
+      let touchStartX = null;
+      stage.addEventListener("touchstart", (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+      }, { passive: true });
+      stage.addEventListener("touchend", (event) => {
+        if (touchStartX === null) return;
+        const distance = event.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(distance) > 50) goTo(distance < 0 ? 1 : -1);
+      });
+
+      // Bei Größenänderung neu einpassen
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { if (pdf) render(); }, 150);
+      });
+
+      if (!window.pdfjsLib) {
+        showFallback();
+        return;
+      }
+
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+      pdfjsLib.getDocument(url).promise
+        .then((loadedPdf) => {
+          pdf = loadedPdf;
+          render();
+        })
+        .catch(showFallback);
+    }
+
+    document.querySelectorAll(".pdf-viewer").forEach(initPdfViewer);
 
 
     // ------ Reveal-Animation ------

@@ -344,6 +344,25 @@ section#aboutme {
   grid-row: 2;
 }
 
+/* About me: Selfie steht rechts neben dem Text, mittig zu ihm
+   (nimmt dafür beide Zeilen ein, wie der Text links) */
+.aboutme3 .img-small-bottom {
+  grid-row: 1 / span 2;
+}
+
+/* Hauptkategorien (Media Design, Visual Art): Überschrift und Text stehen
+   in EINEM Feld direkt untereinander – kein großer Abstand zwischen beiden. */
+.grid-intro {
+  grid-row: 1 / span 2;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.grid-intro p {
+  margin-left: 0;
+}
+
 /* Inhalt einer Galerie-Section füllt die verfügbare Breite */
 .grid-title {
   box-sizing: border-box;
@@ -374,6 +393,116 @@ section#aboutme {
 
 .image-row .grid-item img {
   height: auto; /* Seitenverhältnis bleibt erhalten */
+}
+
+/* ----- Variante: nur EIN Objekt (Überschrift oben, Objekt darunter) ----- */
+.grid-container.grid-single {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0;
+}
+
+.grid-single > .grid-item {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+.grid-heading {
+  justify-content: flex-start;
+}
+
+/* ----- PDF zum Blättern ----- */
+.pdf-item {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.pdf-stage {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.pdf-stage:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.pdf-stage canvas {
+  display: block;
+  flex: none;
+  transition: opacity 0.35s ease;
+}
+
+.pdf-stage canvas.is-changing {
+  opacity: 0;
+}
+
+/* Notlösung: PDF im Browser-eigenen Viewer */
+.pdf-object {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.pdf-controls {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
+}
+
+.pdf-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: #00000046;
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.726);
+}
+
+.pdf-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.pdf-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pdf-status {
+  min-width: 7rem;
+  text-align: center;
+  font-family: Montserrat-ExtraLight, sans-serif;
+  color: #fff;
+}
+
+.pdf-open {
+  color: #fff;
+  font-family: Montserrat-ExtraLight, sans-serif;
+  font-size: 0.9rem;
+}
+
+.pdf-item.is-fallback .pdf-btn,
+.pdf-item.is-fallback .pdf-status {
+  display: none;
 }
 
 /* ==========================================================
@@ -629,6 +758,18 @@ div {
     width: 100%;
     height: auto;
     object-fit: contain;
+  }
+
+  /* Variante mit nur einem Objekt: einspaltig */
+  .grid-container.grid-single {
+    grid-template-rows: none;
+    gap: 10px;
+  }
+
+  /* PDF am Handy: Breite bestimmt die Größe, Höhe automatisch */
+  .pdf-item .pdf-stage {
+    flex: none;
+    height: auto;
   }
 
   /* Reihenfolge der Elemente */
