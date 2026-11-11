@@ -28,16 +28,24 @@
 /* ==========================================================
    GRUNDLAGEN
    ========================================================== */
+/* Maximale Größen der Galerie – hier zentral einstellbar */
+:root {
+  --grid-max-h: 800px;  /* maximale Höhe des großen Bildes */
+  --grid-max-w: 1400px; /* maximale Breite des gesamten Inhalts */
+}
+
 html {
   scroll-behavior: smooth;
   background-color: rgb(0, 0, 0);
   /* Skalierung: bis ca. 1280px Breite normal (16px), danach wächst die
-     Grundschriftgröße mit dem Fenster (max. 150 %). Alles in rem skaliert mit. */
-  font-size: clamp(100%, calc(56% + 0.55vw), 150%);
+     Grundschriftgröße leicht mit dem Fenster (max. 112,5 % = 18px).
+     Alles in rem skaliert mit. */
+  font-size: clamp(100%, calc(56% + 0.55vw), 112.5%);
 }
 
 body {
   margin: 0; /* kein weißer/schwarzer Rand um das Titelbild */
+  padding-bottom: 3rem; /* Luft unter der letzten Section */
 }
 
 /* ==========================================================
@@ -231,14 +239,6 @@ section#aboutme {
 /* ----- About me ----- */
 .aboutme3 {
   display: flex;
-  align-items: center;   /* wie bei den Galerie-Sections: Inhalt mittig im Viewport */
-  min-height: 100vh;
-  padding-block: 20px;
-}
-
-/* About me: großer Text behält den Goldenen Schnitt (Text hat kein Bildformat) */
-.aboutme3 .grid-container {
-  --cols: 1.618fr 1fr;
 }
 
 .aboutme-text {
@@ -249,37 +249,61 @@ section#aboutme {
 /* ==========================================================
    GALERIE
    ========================================================== */
+/* ----- Abstände zwischen den Kategorien -----
+   Kein Leerraum mehr durch "100vh pro Section". Der Abstand zwischen zwei
+   Kategorien ist so groß wie der zwischen Media Design und Logo Design
+   (15px + Innenabstand der Container). Hauptkategorien haben etwas mehr. */
 .gallery {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background-color: #000000;
   /* oben | rechts | unten | links (links = Platz für die feste Navigation) */
-  padding: 20px 20px 20px max(18rem, 22vw);
+  padding: 0 20px 0 max(18rem, 22vw);
+  margin-top: 15px;
+}
+
+/* Hauptkategorien: etwas mehr Abstand nach oben */
+.section-main,
+.aboutme3 {
+  margin-top: 4rem;
+}
+
+/* Beim Anspringen (Menü, Pfeile) etwas Luft über der Section */
+.gallery,
+.aboutme3,
+.grid-title {
+  scroll-margin-top: 2rem;
 }
 
 /*
-  Goldener Schnitt Aufteilung (ca. 61.8% zu 38.2%)
-  Spalte 1: 1.618fr | Spalte 2: 1fr
-  Zeile 1: 1fr | Zeile 2: 1.618fr (umgedreht für optische Balance)
+  Aufteilung jeder Kategorie:
+  - linke Spalte: EIN großes Element (Bild oder Text), so hoch wie der Viewport
+  - rechte Spalte: 2 Elemente untereinander (z. B. 2 Bilder oder Überschrift + Bild)
+    bzw. Überschrift mit Text
+  Die genauen Spalten- und Zeilengrößen berechnet das JavaScript (fitGrids)
+  aus den Bildformaten, damit Bilder nie verzerrt werden und bündig stehen.
+  Die Werte hier sind nur Startwerte, falls JavaScript noch nicht gelaufen ist.
 */
 .grid-container {
-  /* Das große Element füllt in JEDER Section die volle Höhe des Viewports
-     (abzüglich Rand). Seine Breite folgt dem Seitenverhältnis des Bildes
-     (--large-ratio = Breite / Höhe, wird vom JavaScript gesetzt; 1.2 ist der
-     Startwert). 4rem = Innenabstände oben/unten bzw. links/rechts.
-     Die Breite wird auf 35 % – 70 % begrenzt, der Rest gehört den 2 kleinen Elementen. */
-  --grid-h: calc(100vh - 8rem);
-  --large-ratio: 1.2;
-  --cols: minmax(0, clamp(35%, calc((var(--grid-h) - 4rem) * var(--large-ratio) + 4rem), 70%)) minmax(0, 1fr);
+  --grid-h: min(calc(100vh - 8rem), var(--grid-max-h)); /* Viewport-Höhe abzüglich Rand, aber nie größer als das Maximum */
+  --cols: minmax(0, 3fr) minmax(0, 2fr);
+  --rows: minmax(0, 1fr) minmax(0, 1fr);
 
   display: grid;
   grid-template-columns: var(--cols);
-  grid-template-rows: 1fr 1.618fr;
+  grid-template-rows: var(--rows);
+  justify-content: center;
   gap: 15px;
   width: calc(100% - 2rem); /* 2rem = Innenabstand links/rechts, kein Überstand */
+  max-width: var(--grid-max-w);
+  margin-inline: auto; /* bei maximaler Breite mittig */
   height: var(--grid-h);
+}
+
+/* Kleinere Variante, z. B. für Contact (Symbole/Grafiken sollen nicht riesig werden) */
+.grid-compact {
+  --grid-h: min(55vh, 420px);
 }
 
 .grid-item {
@@ -288,7 +312,7 @@ section#aboutme {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0;
   overflow: visible;
   min-height: 0;
 
@@ -320,6 +344,7 @@ section#aboutme {
   display: block;
   width: 100%;
   height: 100%;
+  padding: 0;
 }
 
 /* Bild 1 nimmt die komplette linke Spalte ein */
@@ -332,6 +357,7 @@ section#aboutme {
 .img-small-top {
   grid-column: 2;
   grid-row: 1;
+  justify-content: flex-start; /* Überschrift bündig mit dem Bild darunter */
 
   p {
     margin-left: 1rem;
@@ -367,6 +393,7 @@ section#aboutme {
 .grid-title {
   box-sizing: border-box;
   width: 100%;
+  padding-block: 0; /* sonst wären die Abstände zwischen den Sections doppelt so groß */
 }
 
 /* ----- Zusätzliche Bildreihen (1 bis 4 Bilder nebeneinander) ----- */
@@ -379,16 +406,15 @@ section#aboutme {
   align-items: center;
   gap: 15px;
   width: calc(100% - 2rem);
+  max-width: var(--grid-max-w);
+  margin-inline: auto;
 }
 
+/* Breite jedes Bildes richtet sich nach seinem Seitenverhältnis (setzt das
+   JavaScript), dadurch sind alle Bilder einer Reihe gleich hoch. */
 .image-row .grid-item {
   flex: 1 1 0;
   min-width: 0;
-}
-
-/* Breiteres Bild in einer Reihe (Goldener Schnitt) */
-.image-row .img-wide {
-  flex: 1.618 1 0;
 }
 
 .image-row .grid-item img {
@@ -534,6 +560,11 @@ div {
   padding: 1rem;
 }
 
+/* Fließtext: etwas mehr Zeilenabstand für bessere Lesbarkeit */
+p {
+  line-height: 1.55;
+}
+
 /* ==========================================================
    TABLET UND SMARTPHONE (bis 1024px)
    Muss am Ende stehen, damit es die Desktop-Regeln überschreibt.
@@ -676,6 +707,20 @@ div {
     margin: 0;
     padding: 80px 16px 20px;
     background-position: left center;
+  }
+
+  /* Am Handy sorgt das Padding oben (80px) für den Abstand */
+  .gallery,
+  .aboutme3,
+  .section-main {
+    margin-top: 0;
+  }
+
+  /* Beim Anspringen nicht unter Logo und Burger-Button verstecken */
+  .gallery,
+  .aboutme3,
+  .grid-title {
+    scroll-margin-top: 80px;
   }
 
   /* Innere Container ohne zusätzlichen Abstand, sonst werden die Bilder schmaler */
