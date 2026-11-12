@@ -931,4 +931,21 @@ p {
     opacity: 1;
     transform: none;
   }
+
+  /* Einzelnes Bild: gleiche Breite wie der Text, originales Seitenverhältnis. */
+  .grid-container:not(.grid-compact) > .swipe:has(> .grid-item:only-child) {
+    width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .grid-container:not(.grid-compact) > .swipe > .grid-item:only-child {
+    width: 100% !important; /* überschreibt die vom JavaScript gesetzte Breite */
+    max-width: none;
+    height: auto;
+  }
+
+  .grid-container:not(.grid-compact) > .swipe > .grid-item:only-child img {
+    height: auto;
+  }
 }
