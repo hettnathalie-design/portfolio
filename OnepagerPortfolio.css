@@ -324,8 +324,11 @@ section#aboutme {
 
   p {
     overflow-wrap: break-word;
+    /* Blocksatz, letzte Zeile linksbündig */
+    text-align: justify;
+    text-align-last: left;
+    /* wenige Trennstriche: nur lange Wörter (mind. 9 Buchstaben, je 4 vor/nach dem Strich) */
     hyphens: auto;
-    /* weniger Trennstriche: nur lange Wörter (mind. 9 Buchstaben, je 4 vor/nach dem Strich) */
     hyphenate-limit-chars: 9 4 4;
     text-wrap: pretty;
   }
