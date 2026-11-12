@@ -36,6 +36,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip; /* Sicherheitsnetz: nie eine waagerechte Scrollleiste für die ganze Seite */
   background-color: rgb(0, 0, 0);
   /* Skalierung: bis ca. 1280px Breite normal (16px), danach wächst die
      Grundschriftgröße leicht mit dem Fenster (max. 112,5 % = 18px).
@@ -210,6 +211,7 @@ section#aboutme {
     linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0)),
     url(./BilderPortfolio/Soundwave-01.webp);
   background-repeat: no-repeat;
+  box-sizing: border-box; /* sonst ist die Section 100% + linker Innenabstand breit => waagerechte Scrollleiste */
   width: 100%;
   min-height: 100vh;
   background-size: cover;
@@ -734,6 +736,7 @@ p {
   #mediadesign,
   #visualart,
   .gallery {
+    box-sizing: border-box; /* Seitenabstand ist in den 100 % enthalten, sonst ist die Seite zu breit */
     width: 100%;
     padding: 0 var(--gutter);
     background-position: left center;
@@ -854,6 +857,8 @@ p {
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--gutter);
+    overscroll-behavior-x: contain; /* am Ende der Leiste wird nicht die Seite verschoben */
+    touch-action: pan-x pan-y;      /* waagerecht wischen (Leiste) und senkrecht scrollen (Seite) */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
   }
@@ -878,22 +883,22 @@ p {
     scroll-snap-align: start;
   }
 
-  /* Hüllen um das Bild: Höhe der Leiste, Breite ergibt sich aus dem Bildformat */
+  /* Hüllen um das Bild füllen das ganze Bild-Feld.
+     Die Breite jedes Feldes setzt das JavaScript (fitGrids) aus Höhe x Bildformat. */
   .swipe .grid-item:not(.grid-text) > .reveal,
   .swipe .grid-item > a,
   .swipe .grid-item > .reveal > a,
   .image-row .grid-item > a {
     padding: 0;
-    width: auto;
+    width: 100%;
     height: 100%;
   }
 
   /* Bilder: gleiche Höhe, Breite nach Format, nichts wird verzerrt oder abgeschnitten */
   .swipe .grid-item img,
   .image-row .grid-item img {
-    width: auto;
+    width: 100%;
     height: 100%;
-    max-width: 100%;
     object-fit: contain;
   }
 

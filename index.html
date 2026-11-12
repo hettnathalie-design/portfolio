@@ -450,6 +450,20 @@
     function fitGrids() {
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
+      // Handy: Breite jedes Bildes in der Wischleiste = Höhe x Bildformat.
+      // So steht die Breite sicher fest und die Leiste lässt sich zuverlässig wischen.
+      document.querySelectorAll(".swipe > .grid-item, .image-row > .grid-item").forEach((slide) => {
+        if (!mobileView.matches) {
+          slide.style.removeProperty("width");
+          return;
+        }
+        const ratio = ratioOf(slide);
+        const slideHeight = parseFloat(getComputedStyle(slide).height);
+        if (ratio && slideHeight) {
+          slide.style.width = Math.round(slideHeight * ratio) + "px"; // max-width im CSS begrenzt es
+        }
+      });
+
       document.querySelectorAll(".grid-container").forEach((container) => {
         container.style.removeProperty("height"); // Soll-Höhe aus dem CSS messen
 
