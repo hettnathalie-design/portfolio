@@ -89,7 +89,7 @@
           <h3>ABOUT ME</h3>
           <p>Kreativität begleitet mich schon seit meiner Jugend. Was mit dem Zeichnen begann, hat sich über die Jahre zu einer vielseitigen Leidenschaft entwickelt, die mich immer wieder dazu antreibt, Neues auszuprobieren und meine Fähigkeiten weiterzuentwickeln.
           <br><br>Besonders begeistern mich digitale Illustrationen im Manga-Stil und Character Design. Eigene Charaktere zu entwerfen, ihnen Persönlichkeit zu verleihen und ihre Geschichten durch visuelle Gestaltung zum Ausdruck zu bringen, gehört zu meinen liebsten kreativen Tätigkeiten. Auch mit der Erstellung von 2D-Modellen habe ich mich bereits beschäftigt. Gleichzeitig experimentiere ich gerne mit traditionellen Medien wie Acryl und Aquarell, um unterschiedliche Techniken und Ausdrucksmöglichkeiten kennenzulernen.
-          <br><br>Mich begeistert, wie aus einer Gestaltungsidee durch HTML, CSS und JavaScript eine Website entsteht, die man nicht nur ansehen, sondern auch entdecken und bedienen kann. Dieses Portfolio ist meine erste selbst entwickelte Website – und mein Einstieg darin, meiner Kreativität auch mit Code Ausdruck zu verleihen.
+          <br><br>Neben der Illustration entdecke ich immer wieder neue Interessen. Seit Kurzem beschäftige ich mich intensiv mit HTML, CSS und JavaScript. Was zunächst aus Neugier begann, hat sich schnell zu einer neuen Begeisterung entwickelt: Ich möchte meine eigene Website gestalten und dabei Design und Programmierung miteinander verbinden.
           <br><br>Ich bin ein kreativer, neugieriger Mensch, der gerne dazulernt, Ideen ausprobiert und sich neuen Herausforderungen stellt. Für mich bedeutet Kreativität, offen für neue Möglichkeiten zu bleiben und sich immer wieder weiterzuentwickeln.
           <br>Dieses Portfolio vereint meine gestalterischen Arbeiten, persönlichen Projekte und Interessen – und gibt einen Einblick in die Dinge, die mich inspirieren und antreiben.</p>
         </div>
@@ -340,7 +340,7 @@
         <!-- Überschrift + Text in EINEM Feld -->
         <div class="grid-item img-small-top grid-intro reveal">
           <h3>VISUAL ART</h3>
-          <p>Ob Acryl auf Leinwand oder digitale Illustration – beim Zeichnen und Malen vergesse ich gerne die Zeit. Hier zeige ich eine Auswahl meiner freien Arbeiten: von eigenen Charakterdesigns über Anime-Illustrationen bis zu Fanarts, die bekannten Figuren meine persönliche Handschrift verleihen.</p>
+           <p>Ob Acryl auf Leinwand oder digitale Illustration – beim Zeichnen und Malen vergesse ich gerne die Zeit. Hier zeige ich eine Auswahl meiner freien Arbeiten: von eigenen Charakterdesigns über Anime-Illustrationen bis zu Fanarts, die bekannten Figuren meine persönliche Handschrift verleihen.</p>
         </div>
         <div class="swipe reveal">
           <div class="grid-item img-large">
@@ -351,7 +351,6 @@
         </div>
       </div>
 
-    
       <!--
         ===== WEITERE BILDER für "VISUAL ART" =====
         So fügst du weitere Bilder hinzu: Kopiere den Block unten, setze ihn HIER ein
@@ -399,8 +398,6 @@
           </div>
         </div>
       </div>
-
-      
       <!--
         ===== WEITERE BILDER für "Illustrations" =====
         So fügst du weitere Bilder hinzu: Kopiere den Block unten, setze ihn HIER ein
@@ -713,10 +710,32 @@
     function fitGrids() {
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
+      // Einzelbilder nach dem Zusammenführen der Folgebilder erkennen.
+      document.querySelectorAll(".swipe").forEach((swipe) => {
+        swipe.classList.toggle("is-single-image",
+          mobileView.matches && swipe.children.length === 1 &&
+          swipe.firstElementChild.classList.contains("grid-item") &&
+          !swipe.closest(".grid-compact"));
+      });
+
+      // Mehrere Bilder: erstes Bild ganz und zweites zur Hälfte sichtbar.
+      document.querySelectorAll(".swipe, .image-row").forEach((strip) => {
+        strip.style.removeProperty("--swipe-h");
+        const slides = Array.from(strip.children).filter((item) => item.classList.contains("grid-item"));
+        const multiple = mobileView.matches && slides.length > 1 && !strip.closest(".grid-compact");
+        strip.classList.toggle("is-multiple-images", multiple);
+        if (!multiple) return;
+        const style = getComputedStyle(strip);
+        const available = strip.clientWidth - parseFloat(style.paddingLeft) - (parseFloat(style.columnGap) || 0);
+        const firstRatio = ratioOf(slides[0]) || 1;
+        const secondRatio = ratioOf(slides[1]) || 1;
+        strip.style.setProperty("--swipe-h", available / (firstRatio + secondRatio * 0.5) + "px");
+      });
+
       // Handy: Breite jedes Bildes in der Wischleiste = Höhe x Bildformat.
       // So steht die Breite sicher fest und die Leiste lässt sich zuverlässig wischen.
       document.querySelectorAll(".swipe > .grid-item, .image-row > .grid-item").forEach((slide) => {
-        if (!mobileView.matches) {
+        if (!mobileView.matches || slide.parentElement.classList.contains("is-single-image")) {
           slide.style.removeProperty("width");
           return;
         }

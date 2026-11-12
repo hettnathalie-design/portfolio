@@ -932,20 +932,29 @@ p {
     transform: none;
   }
 
-  /* Einzelnes Bild: gleiche Breite wie der Text, originales Seitenverhältnis. */
-  .grid-container:not(.grid-compact) > .swipe:has(> .grid-item:only-child) {
+  /* Die berechnete Bildhöhe zeigt das zweite Bild genau zur Hälfte. */
+  .swipe.is-multiple-images > .grid-item,
+  .image-row.is-multiple-images > .grid-item {
+    max-width: none;
+  }
+
+  /* Einzelbilder mobil auf Textbreite; Höhe folgt dem Bildformat. */
+  .grid-container:not(.grid-compact) > .swipe.is-single-image {
     width: 100%;
     margin-inline: 0;
     padding-inline: 0;
   }
 
-  .grid-container:not(.grid-compact) > .swipe > .grid-item:only-child {
-    width: 100% !important; /* überschreibt die vom JavaScript gesetzte Breite */
+  .grid-container:not(.grid-compact) > .swipe.is-single-image > .grid-item {
+    width: 100%;
     max-width: none;
     height: auto;
   }
 
-  .grid-container:not(.grid-compact) > .swipe > .grid-item:only-child img {
+  .grid-container:not(.grid-compact) > .swipe.is-single-image > .grid-item > .reveal,
+  .grid-container:not(.grid-compact) > .swipe.is-single-image > .grid-item > a,
+  .grid-container:not(.grid-compact) > .swipe.is-single-image > .grid-item > .reveal > a,
+  .grid-container:not(.grid-compact) > .swipe.is-single-image img {
     height: auto;
   }
 }
