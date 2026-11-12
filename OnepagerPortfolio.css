@@ -323,6 +323,9 @@ section#aboutme {
   p {
     overflow-wrap: break-word;
     hyphens: auto;
+    /* weniger Trennstriche: nur lange Wörter (mind. 9 Buchstaben, je 4 vor/nach dem Strich) */
+    hyphenate-limit-chars: 9 4 4;
+    text-wrap: pretty;
   }
 }
 
@@ -387,6 +390,12 @@ section#aboutme {
 
 .grid-intro p {
   margin-left: 0;
+}
+
+/* Wischleiste (nur am Handy sichtbar als Leiste): am Desktop erzeugt sie keine
+   eigene Box, die Bilder darin bleiben ganz normale Elemente des Rasters. */
+.swipe {
+  display: contents;
 }
 
 /* Inhalt einer Galerie-Section füllt die verfügbare Breite */
@@ -571,14 +580,32 @@ p {
    ========================================================== */
 @media (max-width: 1024px) {
 
+  :root {
+    --bar-h: 4.5rem;    /* Höhe der schwarzen Leiste oben (Burger-Menü + Logo) */
+    --gutter: 1.5rem;   /* Abstand zum linken/rechten Bildschirmrand */
+  }
+
+  /* Schwarze Leiste hinter Burger-Menü und Logo: Beim Scrollen läuft der Inhalt
+     darunter durch und überlagert sich nicht mit Menü und Logo. */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--bar-h);
+    background: #000;
+    z-index: 900; /* unter Logo (999) und Burger-Button, über dem Inhalt */
+  }
+
   /* ----- Burger-Button ----- */
   .burger-button {
     display: grid;
     place-items: center;
 
     position: fixed;
-    top: 32px;
-    left: 16px;
+    top: calc((var(--bar-h) - 48px) / 2); /* mittig in der Leiste */
+    left: var(--gutter);
     z-index: 1001;
 
     width: 48px;
@@ -620,7 +647,7 @@ p {
     display: none;
 
     position: fixed;
-    top: 100px;
+    top: calc(var(--bar-h) + 8px);
     left: auto;
     bottom: auto;
     z-index: 1000;
@@ -654,21 +681,25 @@ p {
 
   /* ----- Mobiles Logo ----- */
   .mobile-logo {
-    display: block;
+    display: flex;
+    align-items: center;
     position: fixed;
-    top: 16px;
-    left: 20px;
-
-    width: 60px;
+    top: 0;
+    left: calc(var(--gutter) + 60px); /* rechts neben dem Burger-Button */
+    height: var(--bar-h);
+    width: auto;
     background: transparent;
     z-index: 999;
   }
 
   .mobile-logo img {
     display: block;
-    width: 150%;
+    width: 90px;
     height: auto;
-    margin-left: 60px;
+    max-height: 3rem;      /* passt immer in die Leiste */
+    object-fit: contain;   /* nie verzerrt */
+    object-position: left center;
+    margin: 0;
   }
 
   /* ----- Startseite ----- */
@@ -704,26 +735,29 @@ p {
   #visualart,
   .gallery {
     width: 100%;
-    margin: 0;
-    padding: 80px 16px 20px;
+    padding: 0 var(--gutter);
     background-position: left center;
   }
 
-  /* Am Handy sorgt das Padding oben (80px) für den Abstand */
+  /* Abstand zwischen den Sections (Hauptkategorien etwas mehr) */
   .gallery,
-  .aboutme3,
-  .section-main {
-    margin-top: 0;
+  .aboutme3 {
+    margin-top: 2.5rem;
+  }
+
+  .section-main,
+  .aboutme3 {
+    margin-top: 4rem;
   }
 
   /* Beim Anspringen nicht unter Logo und Burger-Button verstecken */
   .gallery,
   .aboutme3,
   .grid-title {
-    scroll-margin-top: 80px;
+    scroll-margin-top: calc(var(--bar-h) + 1rem);
   }
 
-  /* Innere Container ohne zusätzlichen Abstand, sonst werden die Bilder schmaler */
+  /* Innere Container ohne zusätzlichen Abstand */
   #contact,
   #BD,
   #CD,
@@ -736,79 +770,65 @@ p {
   }
 
   .grid-title > * + * {
-    margin-top: 10px; /* Abstand zwischen den Reihen */
+    margin-top: 2rem; /* Abstand zwischen Unterkategorien innerhalb einer Section */
   }
 
   /* ----- Galerie auf dem Handy -----
-     Jedes Bild ist so breit wie der Inhaltsbereich (gleicher Rand links/rechts)
-     und wird nie beschnitten. Hohe Bilder (Hochformat) stehen paarweise
-     nebeneinander – das erkennt das JavaScript und setzt die Klasse "is-pair". */
-  .grid-container,
-  .image-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: none;
-    grid-auto-rows: auto;
+     Oben: Überschrift und Text, alles linksbündig.
+     Darunter: die Bilder nebeneinander in einer Leiste zum Wischen. */
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.75rem;
     width: 100%;
     height: auto;
-    gap: 10px;
     padding: 0;
   }
 
-  /* Alle Grid-Elemente zurücksetzen: standardmäßig volle Breite */
-  .grid-container > .grid-item,
-  .image-row > .grid-item {
-    grid-area: auto;
-    grid-column: 1 / -1;
+  /* Überschrift, Text und PDF-Bereich */
+  .grid-container > .grid-item {
     position: static;
     margin: 0;
     padding: 0;
     width: 100%;
     height: auto;
     min-height: 0;
-    overflow: hidden;
-    border-radius: 0; /* keine runden Ecken auf dem Handy */
-  }
-
-  /* Zwei hohe Bilder nebeneinander */
-  .grid-container > .grid-item.is-pair,
-  .image-row > .grid-item.is-pair {
-    grid-column: auto;
-  }
-
-  /* Text immer zuerst und vollständig sichtbar */
-  .grid-container > .grid-text {
-    order: -1;
-    padding: 1.25rem;
     overflow: visible;
-    height: auto;
-    min-height: 0;
-    aspect-ratio: auto;
+    border-radius: 0; /* keine runden Ecken */
+    justify-content: flex-start; /* Überschrift und Text linksbündig */
+    align-items: flex-start;
+  }
+
+  /* Langer Text (About me): gleiche linke Kante wie Überschrift und Bilder */
+  .grid-container > .grid-text {
     display: block;
-    align-items: initial;
-    justify-content: initial;
+    aspect-ratio: auto;
   }
 
-  /* Wrapper um Bilder: kein Innenabstand, volle Breite */
-  .grid-item:not(.grid-text) > .reveal,
-  .grid-item > a,
-  .grid-item > .reveal > a {
+  .grid-text > .reveal {
     padding: 0;
-    width: 100%;
-    height: auto;
   }
 
-  /* Bilder: volle Breite, Höhe automatisch, nichts abschneiden */
-  .grid-item img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+  .grid-item h3 {
+    margin: 0;
+    text-align: left;
   }
 
-  /* Variante mit nur einem Objekt: einspaltig */
+  /* Blocksatz, letzte Zeile linksbündig; wenige Trennstriche (siehe oben) */
+  .grid-item p {
+    margin-block: 0;
+    text-align: justify;
+    text-align-last: left;
+  }
+
+  /* Variante mit nur einem Objekt (PDF) */
   .grid-container.grid-single {
-    grid-template-rows: none;
-    gap: 10px;
+    gap: 0.75rem;
+  }
+
+  .grid-container > .pdf-item {
+    align-items: stretch;
   }
 
   /* PDF am Handy: Breite bestimmt die Größe, Höhe automatisch */
@@ -817,16 +837,83 @@ p {
     height: auto;
   }
 
-  /* Reihenfolge der Elemente */
-  .img-small-top {
-    order: -2;
+  /* ----- Wischleiste ----- */
+  .swipe,
+  .image-row {
+    --swipe-h: clamp(13rem, 62vw, 26rem); /* Höhe aller Bilder in der Leiste */
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: auto;
+    max-width: none;
+    /* bis an den Bildschirmrand ausdehnen, damit das nächste Bild angeschnitten zu sehen ist */
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
   }
 
-  .img-large {
-    order: 1;
+  .swipe::-webkit-scrollbar,
+  .image-row::-webkit-scrollbar {
+    display: none;
   }
 
-  .img-small-bottom {
-    order: 2;
+  .swipe > .grid-item,
+  .image-row > .grid-item {
+    flex: 0 0 auto;
+    position: static;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    max-width: calc(100vw - 3.5rem); /* rechts bleibt ein Stück des nächsten Bildes sichtbar */
+    height: var(--swipe-h);
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 0;
+    scroll-snap-align: start;
+  }
+
+  /* Hüllen um das Bild: Höhe der Leiste, Breite ergibt sich aus dem Bildformat */
+  .swipe .grid-item:not(.grid-text) > .reveal,
+  .swipe .grid-item > a,
+  .swipe .grid-item > .reveal > a,
+  .image-row .grid-item > a {
+    padding: 0;
+    width: auto;
+    height: 100%;
+  }
+
+  /* Bilder: gleiche Höhe, Breite nach Format, nichts wird verzerrt oder abgeschnitten */
+  .swipe .grid-item img,
+  .image-row .grid-item img {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  /* Contact: Icons untereinander, mittig und kleiner (keine Wischleiste) */
+  .grid-compact .swipe {
+    --swipe-h: clamp(5rem, 26vw, 8rem);
+
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-inline: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  /* Eingeblendet wird die ganze Leiste auf einmal (nicht jedes Bild einzeln),
+     sonst wären angeschnittene Bilder rechts noch unsichtbar */
+  .swipe .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
